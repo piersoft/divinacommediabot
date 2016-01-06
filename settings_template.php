@@ -9,5 +9,5 @@ define('GDRIVEGID1', '1070577019'); //gid del foglio di calcolo . di solito il p
 define('GDRIVEGID2', '1070577019'); // gid dell'eventuale altro foglio di calcolo per esempio foglio Risposte
 define('GDRIVEGID3', ''); // gid dell'eventuale altro foglio di calcolo per esempio sedi azienda/sindacato
 define('NAME', 'Divina Commedia'); // nome del Bot che appare nelle Informazioni /start
-
+define('LOG_FILE', 'log/telegram.csv');
 ?>

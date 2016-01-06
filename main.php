@@ -36,6 +36,8 @@ function start($telegram,$update)
 		$content = array('chat_id' => $chat_id, 'text' => $reply,'disable_web_page_preview'=>true);
 		$telegram->sendMessage($content);
 		$this->create_keyboard_temp($telegram,$chat_id);
+	$log=$today. ",new chat started," .$chat_id. "\n";
+	file_put_contents(LOG_FILE, $log, FILE_APPEND | LOCK_EX);
 
 		exit;
 		}
@@ -124,6 +126,9 @@ if (strpos($csv[$i][0],'O') !== false)$homepage .="\n";
 					$content = array('chat_id' => $chat_id, 'text' => $chunk,'disable_web_page_preview'=>true);
 					$telegram->sendMessage($content);
 	}
+		$log=$today. ",parola," .$chat_id. "\n";
+		file_put_contents(LOG_FILE, $log, FILE_APPEND | LOCK_EX);
+
 		}elseif (strpos($text,'1') !== false || strpos($text,'2') !== false || strpos($text,'3') !== false || strpos($text,'4') !== false || strpos($text,'5') !== false || strpos($text,'6') !== false || strpos($text,'7') !== false || strpos($text,'8') !== false || strpos($text,'9') !== false || strpos($text,'0') !== false ){
 $canto="Purgatorio";
 if (strpos($text,'PA') !== false || strpos($text,'pa') !== false){
@@ -189,10 +194,13 @@ if (strpos($text,'PA') !== false || strpos($text,'pa') !== false){
 		}
 
 		}
+	$log=$today. ",canto," .$chat_id. "\n";
+	file_put_contents(LOG_FILE, $log, FILE_APPEND | LOCK_EX);
 
 		$this->create_keyboard_temp($telegram,$chat_id);
 exit;
 }
+
 
 	}
 
