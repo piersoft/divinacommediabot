@@ -32,7 +32,7 @@ function start($telegram,$update)
 	$today = date("Y-m-d H:i:s");
 
 	if ($text == "/start" || $text == "Informazioni") {
-		$reply = "Benvenuto. Questo è un servizio automatico (bot da Robot) per la ".NAME.". Puoi ricercare i versi per parola anteponendo il carattere ? oppure cliccare su Canto per avere un'intero Canto a scelta. In qualsiasi momento scrivendo /start ti ripeterò questo messaggio di benvenuto.\nQuesto bot è stato realizzato da @piersoft . Il progetto e il codice sorgente sono liberamente riutilizzabili con licenza MIT.";
+		$reply = "Benvenuto. Sono un servizio automatico (bot da Robot) per la ".NAME.". Puoi ricercare i versi per parola anteponendo il carattere ? oppure cliccare su Canto per avere un'intero Canto a scelta. In qualsiasi momento scrivendo /start ti ripeterò questo messaggio di benvenuto.\nQuesto bot è stato realizzato da @piersoft e testato dalla bravissima Prof. Paola Lisimberti. Il progetto e il codice sorgente sono liberamente riutilizzabili con licenza MIT.";
 		$content = array('chat_id' => $chat_id, 'text' => $reply,'disable_web_page_preview'=>true);
 		$telegram->sendMessage($content);
 		$this->create_keyboard_temp($telegram,$chat_id);
@@ -144,9 +144,9 @@ if (strpos($text,'PA') !== false || strpos($text,'pa') !== false){
 			$telegram->sendMessage($content);
 			//$text=str_replace(" ","%20",$text);
 			//$text=strtoupper($text);
-			$urlgd  ="https://spreadsheets.google.com/tq?tqx=out:csv&tq=SELECT%20%2A%20WHERE%20B%20contains%20%27";
+			$urlgd  ="https://spreadsheets.google.com/tq?tqx=out:csv&tq=SELECT%20%2A%20WHERE%20B%20%3D%20";
 			$urlgd .=$text;
-			$urlgd .="%27%20AND%20upper(A)%20contains%20%27";
+			$urlgd .="%20AND%20upper(A)%20contains%20%27";
 			$urlgd .=$canto;
 			$urlgd .="%27&key=".GDRIVEKEY."&gid=".GDRIVEGID1;
 			$inizio=0;
@@ -177,7 +177,7 @@ if (strpos($text,'PA') !== false || strpos($text,'pa') !== false){
 			for ($i=$inizio;$i<$count;$i++){
 
 //	$csv[$i][2]=str_replace(array("\r\n", "\r", "\n"), "", $csv[$i][2] );
-				$homepage .="\n";
+				$homepage .="\n\n";
 		//		$homepage .=$csv[$i][0]." Terzina : ".$csv[$i][1]."\n";
 				$homepage .=$csv[$i][2];
 		//		$homepage .="\n____________\n";
