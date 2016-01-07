@@ -42,7 +42,7 @@ function start($telegram,$update)
 		exit;
 		}
 		elseif ($text == "Canto" || $text == "/canto") {
-			$reply = "Digita direttamente il numero del Canto anteponendo PU=Purgatorio IN=Inferno PA=Paradiso.\nEsempio 2PA. Attenzione!! La risposta sarà ovviamente lunga";
+			$reply = "Digita direttamente il numero del Canto postponendo PU=Purgatorio IN=Inferno PA=Paradiso.\nEsempio 2PA. Attenzione!! La risposta sarà ovviamente lunga";
 			$content = array('chat_id' => $chat_id, 'text' => $reply,'disable_web_page_preview'=>true);
 			$telegram->sendMessage($content);
 			$this->create_keyboard_temp($telegram,$chat_id);
@@ -114,10 +114,12 @@ exit;
 				for ($i=$inizio;$i<$count;$i++){
 
 $homepage .="\n";
-if (strpos($csv[$i][0],'O') !== false)$homepage .="\n";
+					if (strpos($csv[$i][0],'O') !== false)$homepage .="\n";
 					$homepage .=$csv[$i][0];
 					if ($csv[$i][1] !=NULL) $homepage .=" Canto : ".$csv[$i][1];
 					$homepage .="\n".$csv[$i][2];
+					if ($csv[$i][3] !=NULL) 	$homepage .="\n".$csv[$i][3];
+					if ($csv[$i][4] !=NULL) 	$homepage .="\n".$csv[$i][4];
 			//		$homepage .="\n____________\n";
 
 				}
