@@ -32,7 +32,7 @@ function start($telegram,$update)
 	$today = date("Y-m-d H:i:s");
 
 	if ($text == "/start" || $text == "Informazioni") {
-		$reply = "Benvenuto. Sono un servizio automatico (bot da Robot) per la ".NAME.". Puoi ricercare i versi per parola anteponendo il carattere ? oppure cliccare su Canto per avere un'intero Canto a scelta. In qualsiasi momento scrivendo /start ti ripeterò questo messaggio di benvenuto.\nQuesto bot è stato realizzato da @piersoft e testato dalla bravissima Prof. Paola Lisimberti. Il progetto e il codice sorgente sono liberamente riutilizzabili con licenza MIT.";
+		$reply = "Benvenuto. Sono un servizio automatico (bot da Robot) per la ".NAME.". Puoi ricercare i versi per parola anteponendo il carattere ? oppure cliccare su Canto per avere un intero Canto a scelta. In qualsiasi momento scrivendo /start ti ripeterò questo messaggio di benvenuto.\nQuesto bot è stato realizzato da @piersoft e testato dalla bravissima Prof. Paola Lisimberti. Il progetto e il codice sorgente sono liberamente riutilizzabili con licenza MIT.";
 		$content = array('chat_id' => $chat_id, 'text' => $reply,'disable_web_page_preview'=>true);
 		$telegram->sendMessage($content);
 		$this->create_keyboard_temp($telegram,$chat_id);
@@ -70,16 +70,46 @@ exit;
 			$img = curl_file_create('logo.png','image/png');
 			$contentp = array('chat_id' => $chat_id, 'photo' => $img);
 			$telegram->sendPhoto($contentp);
-			if(strpos($text,'?') !== false){
+			if(strpos($text,'?') !== false || strpos($text,'-') !== false){
+				function decode_entities($texts) {
+
+									$texts=htmlentities($texts, ENT_COMPAT,'ISO-8859-1', true);
+									$texts= preg_replace('/&#(\d+);/me',"chr(\\1)",$texts); #decimal notation
+									$texts= preg_replace('/&#x([a-f0-9]+);/mei',"chr(0x\\1)",$texts);  #hex notation
+									$texts= html_entity_decode($texts,ENT_COMPAT,"ISO-8859-1"); // UTF-8 does not work!
+			return $texts;
+				}
 				$text=str_replace("?","",$text);
+				$text=str_replace("-","",$text);
 				$location="Sto cercando argomenti con parola chiave: ".$text;
 				$content = array('chat_id' => $chat_id, 'text' => $location,'disable_web_page_preview'=>true);
 				$telegram->sendMessage($content);
 				$text=str_replace(" ","%20",$text);
-				$text=strtoupper($text);
-				$urlgd  ="https://spreadsheets.google.com/tq?tqx=out:csv&tq=SELECT%20%2A%20WHERE%20upper(C)%20contains%20%27";
+/*
+if (strpos($text,'è') === false || strpos($text,'é') === false || strpos($text,'ò') === false || strpos($text,'à') === false || strpos($text,'ù') === false || strpos($text,'ì') === false){
+			$content = array('chat_id' => $chat_id, 'text' => "Purtroppo la ricerca per caratteri accentati non è ancora implementata",'disable_web_page_preview'=>true);
+			$telegram->sendMessage($content);
+			$this->create_keyboard_temp($telegram,$chat_id);
+	exit;
+}
+*/
+$text=strtolower($text);
+//			$text=mb_strtoupper($text,'UTF-8');
+			$text=str_replace("ò","%C3%B2",$text);
+			$text=str_replace("à","%C3%A0",$text);
+			$text=str_replace("è","%C3%A8",$text);
+			$text=str_replace("é","%C3%A9",$text);
+			$text=str_replace("ì","%C3%AC",$text);
+			$text=str_replace("ù","%C3%B9",$text);
+
+
+				$urlgd  ="https://spreadsheets.google.com/tq?tqx=out:csv&tq=SELECT%20%2A%20WHERE%20lower(C)%20like%20%27%25";
 				$urlgd .=$text;
-				$urlgd .="%27&key=".GDRIVEKEY."&gid=".GDRIVEGID1;
+				$urlgd .="%25%27&key=".GDRIVEKEY."&gid=".GDRIVEGID1;
+				$urlgd=trim($urlgd);
+				$urlgd=str_replace(array("\r", "\n"), '', $urlgd);
+		//		$content = array('chat_id' => $chat_id, 'text' => "debug: ".$text."\n".$urlgd,'disable_web_page_preview'=>true);
+		//		$telegram->sendMessage($content);
 			//	sleep (1);
 				$inizio=0;
 				$homepage ="";
@@ -87,6 +117,7 @@ exit;
 
 				//echo $urlgd;
 				$csv = array_map('str_getcsv',file($urlgd));
+
 				//var_dump($csv[1][0]);
 				$count = 0;
 				foreach($csv as $data=>$csv1){
@@ -103,23 +134,18 @@ exit;
 							$telegram->sendMessage($content);
 							exit;
 						}
-					function decode_entities($text) {
 
-										$text=htmlentities($text, ENT_COMPAT,'ISO-8859-1', true);
-			   						$text= preg_replace('/&#(\d+);/me',"chr(\\1)",$text); #decimal notation
-										$text= preg_replace('/&#x([a-f0-9]+);/mei',"chr(0x\\1)",$text);  #hex notation
-										$text= html_entity_decode($text,ENT_COMPAT,"UTF-8"); #NOTE: UTF-8 does not work!
-				return $text;
-					}
 				for ($i=$inizio;$i<$count;$i++){
 
-$homepage .="\n";
+					$homepage .="\n";
 					if (strpos($csv[$i][0],'O') !== false)$homepage .="\n";
 					$homepage .=$csv[$i][0];
 					if ($csv[$i][1] !=NULL) $homepage .=" Canto : ".$csv[$i][1];
 					$homepage .="\n".$csv[$i][2];
 					if ($csv[$i][3] !=NULL) 	$homepage .="\n".$csv[$i][3];
 					if ($csv[$i][4] !=NULL) 	$homepage .="\n".$csv[$i][4];
+					if ($csv[$i][5] !=NULL) 	$homepage .="\n".$csv[$i][5];
+					if ($csv[$i][6] !=NULL) 	$homepage .="\n".$csv[$i][6];
 			//		$homepage .="\n____________\n";
 
 				}
