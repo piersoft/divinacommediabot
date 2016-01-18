@@ -30,9 +30,10 @@ function start($telegram,$update)
 {
 	date_default_timezone_set('Europe/Rome');
 	$today = date("Y-m-d H:i:s");
+	if (strpos($text,'@divinacommediabot') !== false) $text=str_replace("@divinacommediabot ","",$text);
 
 	if ($text == "/start" || $text == "Informazioni") {
-		$reply = "Benvenuto. Sono un servizio automatico (bot da Robot) per la ".NAME.". Puoi ricercare i versi per parola anteponendo il carattere ? oppure cliccare su Canto per avere un intero Canto a scelta. In qualsiasi momento scrivendo /start ti ripeterò questo messaggio di benvenuto.\nQuesto bot è stato realizzato da @piersoft e testato dalla bravissima Prof. Paola Lisimberti. Il progetto e il codice sorgente sono liberamente riutilizzabili con licenza MIT.";
+		$reply = "Benvenuto. Sono un servizio automatico (bot da Robot) per la ".NAME.". Puoi ricercare i versi per parola anteponendo il carattere ? oppure cliccare su Canto per avere un intero Canto a scelta. In qualsiasi momento scrivendo /start ti ripeterò questo messaggio di benvenuto.\nQuesto bot è stato realizzato da @piersoft. E' stato testato dalla bravissima Prof. Paola Lisimberti e sarà alimentato dai links per terzine da parte della 3B del Liceo Pepe di Ostuni (che ringraziamo sentitamente), da Fabio Antonio Grasso (critico d'arte), Pino Suriano (Presidente Ass. Dante Alighieri Matera), Fedele Condedo (architetto visionario ed esperto processi partecipati), Mimmo Aprile (professore e Ingegnere). Il progetto e il codice sorgente sono liberamente riutilizzabili con licenza MIT.";
 		$content = array('chat_id' => $chat_id, 'text' => $reply,'disable_web_page_preview'=>true);
 		$telegram->sendMessage($content);
 		$this->create_keyboard_temp($telegram,$chat_id);
@@ -70,6 +71,8 @@ exit;
 			$img = curl_file_create('logo.png','image/png');
 			$contentp = array('chat_id' => $chat_id, 'photo' => $img);
 			$telegram->sendPhoto($contentp);
+		//	if (strpos($text,'@divinacommediabot') !== false) $text=str_replace("@divinacommediabot ","-",$text);
+
 			if(strpos($text,'?') !== false || strpos($text,'-') !== false){
 				function decode_entities($texts) {
 
@@ -142,9 +145,13 @@ $text=strtolower($text);
 					$homepage .=$csv[$i][0];
 					if ($csv[$i][1] !=NULL) $homepage .=" Canto : ".$csv[$i][1];
 					$homepage .="\n".$csv[$i][2];
+					if ($csv[$i][7] !=NULL) 	$homepage .="\n[".$csv[$i][7]."]";
 					if ($csv[$i][3] !=NULL) 	$homepage .="\n".$csv[$i][3];
+					if ($csv[$i][8] !=NULL) 	$homepage .="\n[".$csv[$i][8]."]";
 					if ($csv[$i][4] !=NULL) 	$homepage .="\n".$csv[$i][4];
+					if ($csv[$i][9] !=NULL) 	$homepage .="\n[".$csv[$i][9]."]";
 					if ($csv[$i][5] !=NULL) 	$homepage .="\n".$csv[$i][5];
+					if ($csv[$i][10] !=NULL) 	$homepage .="\n[".$csv[$i][10]."]";
 					if ($csv[$i][6] !=NULL) 	$homepage .="\n".$csv[$i][6];
 			//		$homepage .="\n____________\n";
 
@@ -236,7 +243,7 @@ exit;
 	 {
 			 $option = array(["Canto","Ricerca"],["Informazioni"]);
 			 $keyb = $telegram->buildKeyBoard($option, $onetime=false);
-			 $content = array('chat_id' => $chat_id, 'reply_markup' => $keyb, 'text' => "[Digita o Seleziona]");
+			 $content = array('chat_id' => $chat_id, 'reply_markup' => $keyb, 'text' => "[Digita la parola da cercare anteponendo ? o Seleziona]");
 			 $telegram->sendMessage($content);
 	 }
 
